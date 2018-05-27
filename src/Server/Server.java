@@ -55,7 +55,7 @@ public class Server {
             clientSocket.getOutputStream().close();
             clientSocket.close();
         } catch (IOException e) {
-            LOG.error("IOException", e);
+            e.printStackTrace();
         }
     }
 

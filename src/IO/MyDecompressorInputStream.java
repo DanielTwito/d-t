@@ -27,23 +27,36 @@ public class MyDecompressorInputStream extends InputStream {
      */
     public int read(byte[] readTo) throws IOException {
 
-        byte[] compressed=new byte[0];
+        //byte[] compressed=new byte[0];
+        ArrayList<Integer> compressed=new ArrayList<>();
         try {
-            compressed = (in.readAllBytes());
+            while(true){
+                int data=in.read();
+                if(data == -1)
+                    break;
+                compressed.add(data);
+            }
+        //compressed = (in.readAllBytes());
         }catch (IOException e){
             e.printStackTrace();
         }
-        ArrayList<Byte> deCompressed = new ArrayList<>();
         int index=0;
-        while (compressed[index]!=-3){
-            deCompressed.add(compressed[index]);
+        //copy the all meta data as is
+        while (compressed.get(index) !=-3){
+            readTo[index]=compressed.get(index).byteValue();
             index++;
         }
-        index++;
-        for (int j=1; index < compressed.length; index++) {
-            byte tmp=compressed[index];
+        //write "-3"- a sign to end of meta data
+        readTo[index]=compressed.get(index).byteValue();
+        int loc=++index;
+
+        ArrayList<Integer> deCompressed = new ArrayList<>();
+
+        //decode the compressed data
+        for (int j=1; index < compressed.size(); index++) {
+            int tmp= compressed.get(index);
             while(tmp>0) {
-                deCompressed.add((byte) j);
+                deCompressed.add(j);
                 tmp--;
             }
             if(j==1)
@@ -52,11 +65,13 @@ public class MyDecompressorInputStream extends InputStream {
                 j=1;
 
         }
+
         for (int i = 0; i < deCompressed.size(); i++) {
-            readTo[i]= deCompressed.get(i);
+            readTo[loc]=deCompressed.get(i).byteValue();
+
         }
 
-        return compressed.length;
+        return compressed.size();
     }
 
 }
