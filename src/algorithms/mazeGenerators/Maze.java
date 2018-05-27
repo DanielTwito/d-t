@@ -114,7 +114,6 @@ public class Maze {
 
 
 
-    // did you practice on 6-5??
     public byte[] toByteArray(){
         /**
          *  add start and end point and the size at the end of the array when -2 separating the values
