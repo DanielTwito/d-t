@@ -31,15 +31,17 @@ public class MyDecompressorInputStream extends InputStream {
         ArrayList<Integer> compressed=new ArrayList<>();
         try {
             while(true){
-                int data=in.read();
+                Integer i=in.read();
+                Byte data=i.byteValue();
                 if(data == -1)
                     break;
-                compressed.add(data);
+                compressed.add(data.intValue());
             }
         //compressed = (in.readAllBytes());
         }catch (IOException e){
             e.printStackTrace();
         }
+        in.close();
         int index=0;
         //copy the all meta data as is
         while (compressed.get(index) !=-3){
@@ -66,7 +68,7 @@ public class MyDecompressorInputStream extends InputStream {
 
         }
 
-        for (int i = 0; i < deCompressed.size(); i++) {
+        for (int i = 0; loc < readTo.length; i++,loc++) {
             readTo[loc]=deCompressed.get(i).byteValue();
 
         }
