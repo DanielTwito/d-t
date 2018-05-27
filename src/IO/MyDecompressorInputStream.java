@@ -27,8 +27,12 @@ public class MyDecompressorInputStream extends InputStream {
      */
     public int read(byte[] readTo) throws IOException {
 
-        byte[] compressed = (in.readAllBytes());
-
+        byte[] compressed=new byte[0];
+        try {
+            compressed = (in.readAllBytes());
+        }catch (IOException e){
+            e.printStackTrace();
+        }
         ArrayList<Byte> deCompressed = new ArrayList<>();
         int index=0;
         while (compressed[index]!=-3){

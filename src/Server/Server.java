@@ -34,24 +34,22 @@ public class Server {
             while (!stop) {
                 try {
                     Socket clientSocket = server.accept(); // blocking call
-                    LOG.info(String.format("Client excepted: %s", clientSocket.toString()));
                     new Thread(() -> {
                         handleClient(clientSocket);
                     }).start();
                 } catch (SocketTimeoutException e) {
-                    LOG.debug("SocketTimeout - No clients pending!");
+                   e.printStackTrace();
                 }
             }
             server.close();
         } catch (IOException e) {
-            LOG.error("IOException", e);
+           e.printStackTrace();
         }
     }
 
     private void handleClient(Socket clientSocket) {
         try {
-            LOG.debug("Client excepted!");
-            LOG.debug(String.format("Handling client with socket: %s", clientSocket.toString()));
+
             serverStrategy.serverStrategy(clientSocket.getInputStream(), clientSocket.getOutputStream());
             clientSocket.getInputStream().close();
             clientSocket.getOutputStream().close();
@@ -62,7 +60,6 @@ public class Server {
     }
 
     public void stop() {
-        LOG.info("Stopping server..");
         stop = true;
     }
 }
