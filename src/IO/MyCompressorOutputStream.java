@@ -26,12 +26,8 @@ public class MyCompressorOutputStream extends OutputStream {
         int index =0 ;
 
         while (b[index]!=-3){
-            if(b[index]==-2) {
-                index++;
-                continue;
-            }
-            this.write(b[index]);
-            out.write(-2);
+
+            out.write(b[index]);
             index++;
         }
         index++;

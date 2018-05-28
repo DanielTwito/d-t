@@ -18,7 +18,7 @@ public class Client {
      * TODO
      *  check if we need changes here this is a copy paste from aviad lab
      */
-    public void start() {
+    public void communicateWithServer() {
         try {
             Socket theServer = new Socket(serverIP, serverPort);
             System.out.println(String.format("Client is connected to server (IP: %s, port: %s)", serverIP, serverPort));
