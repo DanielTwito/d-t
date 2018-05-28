@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Created by Aviadjo on 3/2/2017.
@@ -14,11 +16,15 @@ public class Server {
     private int listeningInterval;
     private IServerStrategy serverStrategy;
     private volatile boolean stop;
+    public static ThreadPoolExecutor threadPoolExecutor;
+
+
 
     public Server(int port, int listeningInterval, IServerStrategy serverStrategy) {
         this.port = port;
         this.listeningInterval = listeningInterval;
         this.serverStrategy = serverStrategy;
+        this.threadPoolExecutor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
     }
 
     public void start() {
@@ -34,9 +40,9 @@ public class Server {
             while (!stop) {
                 try {
                     Socket clientSocket = server.accept(); // blocking call
-                    new Thread(() -> {
+                    threadPoolExecutor.execute(new Thread(() -> {
                         handleClient(clientSocket);
-                    }).start();
+                    }));
                 } catch (SocketTimeoutException e) {
                    e.printStackTrace();
                 }
