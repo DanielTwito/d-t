@@ -1,14 +1,18 @@
 package test;
 import IO.MyCompressorOutputStream;
 import IO.MyDecompressorInputStream;
+import Server.ServerStrategySolveSearchProblem;
 import algorithms.mazeGenerators.AMazeGenerator;
 import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.MyMazeGenerator;
+import algorithms.search.ISearchable;
+
 import java.io.*;
 import java.util.Arrays;
 
 public class RunCompressDecompressMaze {
     public static void main(String[] args) {
+
         String mazeFileName = "savedMaze.maze";
         AMazeGenerator mazeGenerator = new MyMazeGenerator();
         Maze maze = mazeGenerator.generate(100, 100); //Generate new maze
@@ -39,5 +43,5 @@ public class RunCompressDecompressMaze {
                 Arrays.equals(loadedMaze.toByteArray(),maze.toByteArray());
         System.out.println(String.format("Mazes equal: %s",areMazesEquals));
 //maze should be equal to loadedMaze
-    }
+   }
 }

@@ -5,9 +5,10 @@
 
 package algorithms.mazeGenerators;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Position {
+public class Position implements Serializable {
 
     private int row;
     private int col;

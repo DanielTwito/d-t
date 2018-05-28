@@ -3,10 +3,11 @@
  */
 package algorithms.mazeGenerators;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Maze {
+public class Maze implements Serializable{
 
     private int[][] maze;
     private Position startP;
