@@ -5,6 +5,8 @@ package algorithms.mazeGenerators;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 
 public class Maze implements Serializable{
@@ -156,7 +158,28 @@ public class Maze implements Serializable{
         return ans ;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Maze maze1 = (Maze) o;
+        return row == maze1.row &&
+                col == maze1.col &&
+                Arrays.equals(maze, maze1.maze) &&
+                startP.equals(maze1.startP) &&
+                endP.equals(maze1.endP);
+    }
+
+    @Override
+    public int hashCode() {
+
+        byte[] byteMaze = this.toByteArray();
+        return Arrays.hashCode(byteMaze);
+
+    }
+
     private void intToByteArray(ArrayList<Byte> x, int value) {
+
         while(value >127) {
             x.add((byte) 127);
             value -= 127;

@@ -12,6 +12,12 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
 
     private  boolean firstSol = true;
     public ServerStrategySolveSearchProblem() {
+        try {
+            File f = new File(System.getProperty("java.io.tmpdir")+"solution.txt");
+            f.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -19,11 +25,11 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
         try {
 
             String tmpDirPath = System.getProperty("java.io.tmpdir");
-            String path = "solution.maze";
+            String path = "solution.txt";
             //to write to the file
-            ObjectInputStream solFromFile = new ObjectInputStream(new FileInputStream(tmpDirPath+path));
+            ObjectOutputStream toSolFile = null ;
             //to read from a file
-            ObjectOutputStream toSolFile =  new ObjectOutputStream(new FileOutputStream(tmpDirPath+path));
+            ObjectInputStream fromSolFile = null ;
             // read from a client
             ObjectInputStream fromClient = new ObjectInputStream(inFromClient);
             //send to a client
@@ -37,19 +43,19 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
             if (firstSol) {
 
 //                toSolFile = new ObjectOutputStream(new FileOutputStream(tmpDirPath+path));
+                toSolFile= new ObjectOutputStream(new PrintStream(tmpDirPath+path));
                 solArchive = new HashMap<>();
                 sol = solve(maze);
                 solArchive.put(maze, sol);
                 toSolFile.writeObject(solArchive);
                 firstSol=false;
+                toSolFile.close();
 //                toSolFile.close();
                 // else the solution archive exist and contain former solution
             } else {
-
-//                toSolFile = new ObjectOutputStream(new FileOutputStream(tmpDirPath+path));
-//                solFromFile = new ObjectInputStream(new FileInputStream(tmpDirPath+path));
-                solArchive = (HashMap<Maze, Solution>) solFromFile.readObject();
-
+                fromSolFile =  new ObjectInputStream(new FileInputStream(tmpDirPath+path));
+                solArchive = (HashMap<Maze, Solution>) fromSolFile.readObject();
+                toSolFile =new ObjectOutputStream(new PrintStream(tmpDirPath+path));
                 if (solArchive.containsKey(maze))
                     sol = solArchive.get(maze);
                 else {
@@ -62,6 +68,8 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
             }
             toClient.writeObject(sol);
             toClient.close();
+            fromSolFile.close();
+            toSolFile.close();
         } catch (IOException  | ClassNotFoundException e) {
             e.printStackTrace();
         }
