@@ -5,76 +5,119 @@ import IO.MyDecompressorInputStream;
 import algorithms.mazeGenerators.Maze;
 import algorithms.search.*;
 
+import javax.sound.midi.Soundbank;
 import java.io.*;
 import java.util.HashMap;
 
 public class ServerStrategySolveSearchProblem implements IServerStrategy {
 
     private  boolean firstSol = true;
+    private String tmp = System.getProperty("java.io.tmpdir");
     public ServerStrategySolveSearchProblem() {
-        try {
-            File f = new File(System.getProperty("java.io.tmpdir")+"solution.txt");
-            f.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            File f = new File(System.getProperty("java.io.tmpdir")+"solution.txt");
+//            f.createNewFile();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
+
+
 
     @Override
     public void serverStrategy(InputStream inFromClient, OutputStream outToClient) {
         try {
 
-            String tmpDirPath = System.getProperty("java.io.tmpdir");
-            String path = "solution.txt";
-            //to write to the file
-            ObjectOutputStream toSolFile = null ;
-            //to read from a file
-            ObjectInputStream fromSolFile = null ;
             // read from a client
             ObjectInputStream fromClient = new ObjectInputStream(inFromClient);
             //send to a client
             ObjectOutputStream toClient = new ObjectOutputStream(outToClient);
             toClient.flush();
-
             Solution sol;
             Maze maze = (Maze) fromClient.readObject();
-            HashMap<Maze, Solution> solArchive;
-            //first solution we add to the archive and write the HashMap to the file
-            if (firstSol) {
+            int mazeId = maze.hashCode();
+            File solFile = new File(tmp + mazeId + ".sol");
+            sol = getSOl(solFile, maze);
 
-//                toSolFile = new ObjectOutputStream(new FileOutputStream(tmpDirPath+path));
-                toSolFile= new ObjectOutputStream(new PrintStream(tmpDirPath+path));
-                solArchive = new HashMap<>();
-                sol = solve(maze);
-                solArchive.put(maze, sol);
-                toSolFile.writeObject(solArchive);
-                firstSol=false;
-                toSolFile.close();
-//                toSolFile.close();
-                // else the solution archive exist and contain former solution
-            } else {
-                fromSolFile =  new ObjectInputStream(new FileInputStream(tmpDirPath+path));
-                solArchive = (HashMap<Maze, Solution>) fromSolFile.readObject();
-                toSolFile =new ObjectOutputStream(new PrintStream(tmpDirPath+path));
-                if (solArchive.containsKey(maze))
-                    sol = solArchive.get(maze);
-                else {
-                    sol = solve(maze);
-                    solArchive.put(maze, sol);
-                    toSolFile.writeObject(solArchive);
 
-                }
-
-            }
-            toClient.writeObject(sol);
-            toClient.close();
-            fromSolFile.close();
-            toSolFile.close();
-        } catch (IOException  | ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private Solution getSOl(File solFile, Maze maze) {
+        Solution s = null;
+        try {
+            if (solFile.exists()) {
+                ObjectInputStream readSol = new ObjectInputStream(new FileInputStream(solFile));
+                s = (Solution) readSol.readObject();
+                readSol.close();
+
+            } else {
+                ObjectOutputStream tosolFile = new ObjectOutputStream(new FileOutputStream(solFile));
+                s = solve(maze);
+                tosolFile.writeObject(s);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        return s;
 
     }
+
+//            String tmpDirPath = System.getProperty("java.io.tmpdir");
+//            String path = "solution.txt";
+//            //to write to the file
+//            ObjectOutputStream toSolFile = null ;
+//            //to read from a file
+//            ObjectInputStream fromSolFile = null ;
+//            // read from a client
+//            ObjectInputStream fromClient = new ObjectInputStream(inFromClient);
+//            //send to a client
+//            ObjectOutputStream toClient = new ObjectOutputStream(outToClient);
+//            toClient.flush();
+//
+//            Solution sol;
+//            Maze maze = (Maze) fromClient.readObject();
+//            HashMap<Maze, Solution> solArchive;
+//            //first solution we add to the archive and write the HashMap to the file
+//            if (firstSol) {
+//
+////                toSolFile = new ObjectOutputStream(new FileOutputStream(tmpDirPath+path));
+//                toSolFile= new ObjectOutputStream(new PrintStream(tmpDirPath+path));
+//                solArchive = new HashMap<>();
+//                sol = solve(maze);
+//                solArchive.put(maze, sol);
+//                toSolFile.writeObject(solArchive);
+//                firstSol=false;
+//                toSolFile.close();
+////                toSolFile.close();
+//                // else the solution archive exist and contain former solution
+//            } else {
+//                fromSolFile =  new ObjectInputStream(new FileInputStream(tmpDirPath+path));
+//                solArchive = (HashMap<Maze, Solution>) fromSolFile.readObject();
+//                toSolFile =new ObjectOutputStream(new PrintStream(tmpDirPath+path));
+//                if (solArchive.containsKey(maze))
+//                    sol = solArchive.get(maze);
+//                else {
+//                    sol = solve(maze);
+//                    solArchive.put(maze, sol);
+//                    toSolFile.writeObject(solArchive);
+//
+//                }
+//
+//            }
+//            toClient.writeObject(sol);
+//            toClient.close();
+//            fromSolFile.close();
+//            toSolFile.close();
+//        } catch (IOException  | ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+
+
 
     private Solution solve(Maze maze) {
         ISearchable searchableMaze = new SearchableMaze(maze);

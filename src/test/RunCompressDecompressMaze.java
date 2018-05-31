@@ -13,28 +13,6 @@ import java.util.Arrays;
 
 public class RunCompressDecompressMaze {
     public static void main(String[] args) {
-
-        try {
-            ServerStrategySolveSearchProblem s = new ServerStrategySolveSearchProblem();
-            ObjectOutputStream f = new ObjectOutputStream(new PrintStream(("C:\\Users\\Daniel\\Desktop\\test.txt")));
-            FileInputStream i = new FileInputStream(("C:\\Users\\Daniel\\Desktop\\test.txt"));
-            Maze m = new MyMazeGenerator().generate(5,5);
-            f.writeObject(m);
-            s.serverStrategy(i,f);
-            Maze m1 = new MyMazeGenerator().generate(50,50);
-            f.close();
-            i.close();
-            f = new ObjectOutputStream(new PrintStream(("C:\\Users\\Daniel\\Desktop\\test.txt")));
-            i = new FileInputStream(("C:\\Users\\Daniel\\Desktop\\test.txt"));
-            f.writeObject(m1);
-            s.serverStrategy(i,f);
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
         String mazeFileName = "savedMaze.maze";
         AMazeGenerator mazeGenerator = new MyMazeGenerator();
         Maze maze = mazeGenerator.generate(100, 100); //Generate new maze
