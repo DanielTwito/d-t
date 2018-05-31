@@ -16,7 +16,7 @@ public class Server {
     private int listeningInterval;
     private IServerStrategy serverStrategy;
     private volatile boolean stop;
-    public static ThreadPoolExecutor threadPoolExecutor;
+    public ThreadPoolExecutor threadPoolExecutor;
 
 
 
@@ -25,6 +25,7 @@ public class Server {
         this.listeningInterval = listeningInterval;
         this.serverStrategy = serverStrategy;
         this.threadPoolExecutor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+        threadPoolExecutor.setCorePoolSize(10);
     }
 
     public void start() {
@@ -40,13 +41,13 @@ public class Server {
             while (!stop) {
                 try {
                     Socket clientSocket = server.accept(); // blocking call
-                    threadPoolExecutor.execute(new Thread(() -> {
-                        handleClient(clientSocket);
-                    }));
+                    threadPoolExecutor.execute(new Thread(() -> handleClient(clientSocket)));
+                    //new Thread(()->handleClient(clientSocket)).start();
                 } catch (SocketTimeoutException e) {
-                   e.printStackTrace();
+                    System.out.println("SocketTimeout - No clients pending!");
                 }
             }
+            threadPoolExecutor.shutdown();
             server.close();
         } catch (IOException e) {
            e.printStackTrace();
@@ -55,10 +56,9 @@ public class Server {
 
     private void handleClient(Socket clientSocket) {
         try {
-
             serverStrategy.serverStrategy(clientSocket.getInputStream(), clientSocket.getOutputStream());
             clientSocket.getInputStream().close();
-            clientSocket.getOutputStream().close();
+            //clientSocket.getOutputStream().close();
             clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();

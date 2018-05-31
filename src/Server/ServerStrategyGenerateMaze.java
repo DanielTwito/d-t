@@ -12,14 +12,19 @@ public class ServerStrategyGenerateMaze implements IServerStrategy {
     public void serverStrategy(InputStream inFromClient, OutputStream outToClient) {
 
         int rows=0,cols=0;
-        MyCompressorOutputStream compressor = new MyCompressorOutputStream(outToClient);
+        MyCompressorOutputStream compressor;
         MyMazeGenerator mazeGenerator = new MyMazeGenerator();
         try {
             ObjectInputStream fromClient = new ObjectInputStream(inFromClient);
+            ObjectOutputStream toClient = new ObjectOutputStream(outToClient);
+            toClient.flush();
+            ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
+            compressor=new MyCompressorOutputStream(toClient);
 
             int[] mazeSize=(int[]) fromClient.readObject();
-            rows= inFromClient.read();
-            cols= inFromClient.read();
+            rows=mazeSize[0];
+            cols= mazeSize[1];
+            compressor.write(mazeGenerator.generate(rows,cols).toByteArray());
 
         }
         catch (IOException e){
@@ -28,11 +33,7 @@ public class ServerStrategyGenerateMaze implements IServerStrategy {
         catch (ClassNotFoundException e){
             e.printStackTrace();
         }
-        try {
-            new MyCompressorOutputStream(outToClient).write(mazeGenerator.generate(rows,cols).toByteArray());
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+
 
     }
 }
