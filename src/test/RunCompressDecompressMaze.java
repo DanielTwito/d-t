@@ -1,6 +1,7 @@
 package test;
 import IO.MyCompressorOutputStream;
 import IO.MyDecompressorInputStream;
+import Server.Configurations;
 import Server.ServerStrategySolveSearchProblem;
 import algorithms.mazeGenerators.AMazeGenerator;
 import algorithms.mazeGenerators.Maze;
