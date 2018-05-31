@@ -2,10 +2,12 @@ package IO;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class MyCompressorOutputStream extends OutputStream {
-
+    private ArrayList<Byte> ans;
     private OutputStream out;
     public MyCompressorOutputStream(OutputStream out) {
         this.out = out;
@@ -20,18 +22,19 @@ public class MyCompressorOutputStream extends OutputStream {
      * -3 end meta-data and start maze data
      */
     public void write(byte[] b) throws IOException {
-
+        ans = new ArrayList<>();
         int countOnes=0;
         int countZero=0;
         int index =0 ;
 
         while (b[index]!=-3){
-
-            out.write(b[index]);
+            ans.add(b[index]);
+            //out.write(b[index]);
             index++;
         }
         index++;
-        out.write(-3);
+        ans.add((byte)-3);
+        //out.write(-3);
         boolean flag = false;
         int i = index;
         while (i < b.length) {
@@ -58,6 +61,8 @@ public class MyCompressorOutputStream extends OutputStream {
                 }
              this.write(countZero);
             }
+        ObjectOutputStream o =new ObjectOutputStream(out);
+            o.writeObject(ans.toArray());
 
         }
 
@@ -67,10 +72,11 @@ public class MyCompressorOutputStream extends OutputStream {
     public void write(int b) throws IOException {
 
         while(b>127) {
-            out.write(127);
+            ans.add((byte) 127);
             b -= 127;
         }
-        out.write(b);
+        ans.add((byte) b);
+        //out.write(b);
 //        out.write(-2);
 
     }
