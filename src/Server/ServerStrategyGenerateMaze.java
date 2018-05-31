@@ -1,7 +1,9 @@
 package Server;
 
 import IO.MyCompressorOutputStream;
+import algorithms.mazeGenerators.AMazeGenerator;
 import algorithms.mazeGenerators.MyMazeGenerator;
+import algorithms.mazeGenerators.SimpleMazeGenerator;
 
 import java.io.*;
 
@@ -13,7 +15,8 @@ public class ServerStrategyGenerateMaze implements IServerStrategy {
 
         int rows=0,cols=0;
         MyCompressorOutputStream compressor = new MyCompressorOutputStream(outToClient);
-        MyMazeGenerator mazeGenerator = new MyMazeGenerator();
+        AMazeGenerator mazeGenerator = Configurations.getProperty("GenerateMaze_method").equals("1") ? new MyMazeGenerator() : new SimpleMazeGenerator();
+
         try {
             ObjectInputStream fromClient = new ObjectInputStream(inFromClient);
 
