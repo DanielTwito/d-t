@@ -62,9 +62,12 @@ public class MyCompressorOutputStream extends OutputStream {
              this.write(countZero);
             }
         ObjectOutputStream o =new ObjectOutputStream(out);
-            o.writeObject(ans.toArray());
-
+        byte[] a = new byte[ans.size()];
+        for (int j = 0; j < a.length ; j++) {
+            a[j] = ans.get(j);
         }
+        o.writeObject(a);
+    }
 
 
 

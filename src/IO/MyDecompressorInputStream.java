@@ -2,6 +2,7 @@ package IO;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.*;
 
 public class MyDecompressorInputStream extends InputStream {
@@ -27,36 +28,38 @@ public class MyDecompressorInputStream extends InputStream {
      */
     public int read(byte[] readTo) throws IOException {
 
-        //byte[] compressed=new byte[0];
-        ArrayList<Integer> compressed=new ArrayList<>();
+        byte[] compressed=null;
+        //ArrayList<Integer> compressed=new ArrayList<>();
         try {
-            while(true){
+            /*while(true){
                 Integer i=in.read();
                 Byte data=i.byteValue();
                 if(data == -1)
                     break;
-                compressed.add(data.intValue());
-            }
+                compressed.add(data.intValue());*/
+                ObjectInputStream o = new ObjectInputStream(in);
+            compressed = (byte[]) o.readObject();
+
         //compressed = (in.readAllBytes());
-        }catch (IOException e){
+        }catch (Exception e){
             e.printStackTrace();
         }
         in.close();
         int index=0;
         //copy the all meta data as is
-        while (compressed.get(index) !=-3){
-            readTo[index]=compressed.get(index).byteValue();
+        while (compressed[index] !=-3){
+            readTo[index]=compressed[index];
             index++;
         }
         //write "-3"- a sign to end of meta data
-        readTo[index]=compressed.get(index).byteValue();
+        readTo[index]=compressed[index];
         int loc=++index;
 
         ArrayList<Integer> deCompressed = new ArrayList<>();
 
         //decode the compressed data
-        for (int j=1; index < compressed.size(); index++) {
-            int tmp= compressed.get(index);
+        for (int j=1; index < compressed.length; index++) {
+            int tmp= compressed[index];
             while(tmp>0) {
                 deCompressed.add(j);
                 tmp--;
@@ -73,7 +76,7 @@ public class MyDecompressorInputStream extends InputStream {
 
         }
 
-        return compressed.size();
+        return compressed.length;
     }
 
 }
