@@ -37,7 +37,7 @@ public class RunCompressDecompressMaze {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        byte[] t=maze.toByteArray();
+        byte[] ti =maze.toByteArray();
         Maze loadedMaze = new Maze(savedMazeBytes);
         boolean areMazesEquals =
                 Arrays.equals(loadedMaze.toByteArray(),maze.toByteArray());
