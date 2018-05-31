@@ -71,7 +71,7 @@ public class MyDecompressorInputStream extends InputStream {
 
         }
 
-        for (int i = 0; loc < readTo.length; i++,loc++) {
+        for (int i = 0; loc < Math.min(readTo.length,deCompressed.size()); i++,loc++) {
             readTo[loc]=deCompressed.get(i).byteValue();
 
         }

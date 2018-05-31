@@ -1,6 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="ATP2018 - Project - PartB">
-    <output-path>$PROJECT_DIR$/out/artifacts/ATP2018___Project___PartB</output-path>
-    <root id="archive" name="ATP2018 - Project - PartB.jar" />
-  </artifact>
-</component>

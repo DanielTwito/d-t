@@ -31,7 +31,7 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
             int mazeId = maze.hashCode();
             File solFile = new File(tmp + mazeId + ".sol");
             sol = getSOl(solFile, maze);
-
+            toClient.writeObject(sol);
 
         } catch (Exception e) {
             e.printStackTrace();
