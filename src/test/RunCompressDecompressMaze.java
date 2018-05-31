@@ -1,6 +1,7 @@
 package test;
 import IO.MyCompressorOutputStream;
 import IO.MyDecompressorInputStream;
+import Server.Configurations;
 import Server.ServerStrategySolveSearchProblem;
 import algorithms.mazeGenerators.AMazeGenerator;
 import algorithms.mazeGenerators.Maze;
@@ -37,7 +38,7 @@ public class RunCompressDecompressMaze {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        byte[] t=maze.toByteArray();
+        byte[] ti =maze.toByteArray();
         Maze loadedMaze = new Maze(savedMazeBytes);
         boolean areMazesEquals =
                 Arrays.equals(loadedMaze.toByteArray(),maze.toByteArray());
